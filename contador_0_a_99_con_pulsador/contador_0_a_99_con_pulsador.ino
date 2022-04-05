@@ -1,3 +1,12 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 int pines [] = {0, 1, 2, 3, 4, 5, 6};
 
 #define tr1 8
