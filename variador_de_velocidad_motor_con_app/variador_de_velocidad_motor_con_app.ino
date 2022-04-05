@@ -1,3 +1,12 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 #define pwmA  3
 #define motorinA  4
 #define motorinB  5
