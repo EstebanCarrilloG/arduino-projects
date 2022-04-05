@@ -1,31 +1,33 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 #define led 3 // Pin en donde va conectado el led
 #define pul1 A1 // Pines en donde van conectados los pulsadores
 #define pul2 A2
 int pwm; //Variable que contendrá el valor del pwm
  
 void setup() {
- 
 //--Declaramos entradas y salidas---
  pinMode(led,OUTPUT);
  pinMode(pul1,INPUT);
  pinMode(pul2,INPUT);
- 
- 
 }
  
 void loop() {
  
   if(digitalRead(pul1)== HIGH){ //Si presionamos el pulsador conectado al puerto A1, sumamos el valor de la variable pwm
-   
     pwm++;
-   
-  }
+     }
  
   if(digitalRead(pul2)== HIGH){//Si presionamos el pulsador conectado al puerto A2, restamos el valor de la variable pwm
-     
-    pwm--;
-   
-  }
+     pwm--;
+    }
  
 //-- Las siguientes lineas de codigo son para limitar los valores que puede llegar a tomar la variable pwm---//
   if(pwm > 255){
