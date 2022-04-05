@@ -1,3 +1,12 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 int led[] = {3, 5, 6, 9}; // Pines en donde van conectados los leds
 //--- Pines en donde van conectados los pulsadores ---//
 #define pul0 A0
