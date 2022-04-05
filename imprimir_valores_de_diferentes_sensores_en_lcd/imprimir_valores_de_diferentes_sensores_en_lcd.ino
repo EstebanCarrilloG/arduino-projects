@@ -1,3 +1,12 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 #include <LiquidCrystal.h>
 #define s1 A0
 #define s2 A1
