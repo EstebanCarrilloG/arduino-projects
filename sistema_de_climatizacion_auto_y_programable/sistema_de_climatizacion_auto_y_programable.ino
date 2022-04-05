@@ -1,3 +1,12 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 #define t1 A1
 #define t2 A2
 #define t3 A3
