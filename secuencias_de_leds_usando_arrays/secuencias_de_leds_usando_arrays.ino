@@ -1,3 +1,12 @@
+/* 
+
+* Código escrito por: Esteban Carrillo para EDEPTEC. 
+* Página web: https://www.edeptec.com
+* Facebook: @edeptec
+* Youtube: https://youtube.com/c/EDEPTEC
+
+*/
+
 // Creamos un array
 // Con los pines en donde iran conectados los leds
 int leds[] = {2, 3, 4, 5, 6, 7};
