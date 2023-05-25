@@ -77,7 +77,7 @@ void inputPassword(String password) {
       lcd.setCursor(spaceJump, 1);
       lcd.print('*');
       spaceJump++;
-      blinkLed(greenLed, 5, 10);
+      blinkLed(greenLed, 100, 1);
     }
     boolean state = checkPassword(keyString, password); // 5
     delay(50);
@@ -108,9 +108,7 @@ boolean checkPassword(String keyString, String password) {
     lcd.home();
     if (keyString.equals(password)) {
       lcd.print("CLAVE CORRECTA");
-      digitalWrite(greenLed, 0);
-      delay(1000);
-      digitalWrite(greenLed, 1);
+      blinkLed(greenLed,1000,1);
     } else {
       lcd.print("CLAVE INCORRECTA");
       blinkLed(redLed, 100, 3);
