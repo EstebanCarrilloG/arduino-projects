@@ -26,14 +26,14 @@ void loop() {
       valorAlmacenado++;
 
       delay(25);
-  	EEPROM.put(0, valorAlmacenado);	    
+      EEPROM.put(0, valorAlmacenado);
     }
   }
   estadoAnterior = btnState;
-  
-  EEPROM.get(0,rValue);
 
-  Serial.println(String(rValue,0));
+  EEPROM.get(0, rValue);
+
+  Serial.println(String(rValue, 0));
 
   delay(10);
 }
