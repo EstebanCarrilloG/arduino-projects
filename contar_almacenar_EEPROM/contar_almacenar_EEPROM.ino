@@ -3,6 +3,8 @@
 byte pinPulsador = 2;
 byte estadoAnterior = 0;
 
+float rValue;
+
 float valorAlmacenado = 0;
 
 void setup() {
@@ -12,13 +14,11 @@ void setup() {
 
   Serial.begin(9600);
   EEPROM.put(eeAddress, f);
-  valorAlmacenado = EEPROM.get(0, fg);
+  EEPROM.get(eeAddress, valorAlmacenado);
 }
 
 void loop() {
   boolean btnState = digitalRead(pinPulsador);
-
-
   Serial.println(btnState);
 
   if (btnState != estadoAnterior) {
@@ -26,11 +26,15 @@ void loop() {
       valorAlmacenado++;
 
       delay(25);
-      EEPROM.update(0, valorAlmacenado);
-      Serial.println(valorAlmacenado);
+      EEPROM.put(0, valorAlmacenado);
+      
     }
   }
   estadoAnterior = btnState;
+  
+  EEPROM.get(0,rValue);
+
+  Serial.println(rValue);
 
   delay(10);
 }
