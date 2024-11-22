@@ -7,36 +7,32 @@
 
 */
 
-#define led 3 // Pin en donde va conectado el led
-#define pul1 A1 // Pines en donde van conectados los pulsadores
-#define pul2 A2
-int pwm; //Variable que contendrá el valor del pwm
- 
+// Definición de pines utilizados en el proyecto
+#define led 3         // Pin al que está conectado el LED controlado por PWM
+#define pulSuma A1    // Pin al que está conectado el botón para aumentar el brillo
+#define pulResta A2   // Pin al que está conectado el botón para disminuir el brillo
+
+// Declaración de variable para almacenar el valor del PWM
+byte pwm = 0;
+
 void setup() {
-//--Declaramos entradas y salidas---
- pinMode(led,OUTPUT);
- pinMode(pul1,INPUT);
- pinMode(pul2,INPUT);
+  // Configuración de pines como entrada o salida
+  pinMode(led, OUTPUT);       // Configura el pin del LED como salida
+  pinMode(pulSuma, INPUT);    // Configura el pin del botón de suma como entrada
+  pinMode(pulResta, INPUT);   // Configura el pin del botón de resta como entrada
 }
- 
+
 void loop() {
- 
-  if(digitalRead(pul1)== HIGH){ //Si presionamos el pulsador conectado al puerto A1, sumamos el valor de la variable pwm
-    pwm++;
-     }
- 
-  if(digitalRead(pul2)== HIGH){//Si presionamos el pulsador conectado al puerto A2, restamos el valor de la variable pwm
-     pwm--;
-    }
- 
-//-- Las siguientes lineas de codigo son para limitar los valores que puede llegar a tomar la variable pwm---//
-  if(pwm > 255){
-    pwm = 255;
-  }
-  if(pwm < 0){
-    pwm = 0;
-  }
-//------------------------//
-  analogWrite(led,pwm); // Enviamos por el pin en donde esta conectado el led, los valores de la variable pwm
-   
+  // Incrementar o decrementar el valor del PWM según el estado de los botones
+  (digitalRead(pulSuma) == HIGH) && pwm++;  // Si el botón de suma está presionado, incrementa el PWM
+  (digitalRead(pulResta) == HIGH) && pwm--; // Si el botón de resta está presionado, decrementa el PWM
+  
+  delay(20);  // Retardo para evitar rebotes del botón
+
+  // Limitar el rango del valor PWM entre 0 y 255
+  if (pwm > 255) pwm = 255;  // Si el valor PWM supera 255, lo limita a 255
+  if (pwm < 0) pwm = 0;      // Si el valor PWM baja de 0, lo limita a 0
+
+  // Actualizar el valor del PWM del LED
+  analogWrite(led, pwm);     // Escribe el valor PWM en el pin del LED
 }
