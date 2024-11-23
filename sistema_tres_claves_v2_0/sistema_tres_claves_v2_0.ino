@@ -29,13 +29,13 @@ String pass[3] = {"2A*B", "4#72D", "A8#*5D"}; // Claves
 
 
 /**
-   Inicializa los pines del led verde, rojo y el relay como salidas,
+   Inicializa los pines del led verde y rojo como salidas,
    se encarga de apagarlos y de inicializar el LCD.
 */
 void setup() {
   pinMode(greenLed, OUTPUT);
   pinMode(redLed, OUTPUT);
-  pinMode(relay,OUTPUT);
+  pinMode(relay, OUTPUT);
   digitalWrite(greenLed, 0);
   digitalWrite(redLed, 0);
   digitalWrite(relay, 0);
@@ -93,8 +93,6 @@ void loop() {
       que debe tener la clave.
    4. Espera a que el usuario presione una tecla, si se presiono una tecla
       la agrega a la cadena de caracteres.
-   5. Verifica si la cadena ingresada coincide con la clave dada.
-   6. Si coincide, sale del bucle activa el relay por 300 milisegundos, lo desactiva y limpia el lcd.
 */
 void inputPassword(String password) {
   String keyString = ""; // 1
@@ -112,10 +110,6 @@ void inputPassword(String password) {
     boolean state = checkPassword(keyString, password); // 5
     delay(50);
     if (state == true) { // 6
-      digitalWrite(relay,1);
-      delay(300);
-      digitalWrite(relay,0);
-
       lcd.clear();
       break;
     }
@@ -146,19 +140,24 @@ void printMsg(int n) {
 
 /**
    Compara la clave ingresada por el usuario con la clave correcta.
+   * Si la clave ingresada es igual a la clave seleccionada,
+   muestra en el lcd que la clave es correcta y activa el relay.  
 
    @param keyString La clave ingresada por el usuario.
    @param password La clave correcta.
 
-   @return true si la clave es correcta, false en caso contrario.
+   @return true si el numero de caracteres ingresados es igual al numero de caracteres de la clave, false en caso contrario.
 */
 boolean checkPassword(String keyString, String password) {
-  if (keyString.length() == password.length() ) { //5.1
+  if (keyString.length() == password.length() ) {
     lcd.clear();
     lcd.home();
     if (keyString.equals(password)) {
       lcd.print("CLAVE CORRECTA");
       blinkLed(greenLed, 1000, 1);
+      digitalWrite(relay, 1);
+      delay(300);
+      digitalWrite(relay, 0);
     } else {
       lcd.print("CLAVE INCORRECTA");
       blinkLed(redLed, 100, 3);
