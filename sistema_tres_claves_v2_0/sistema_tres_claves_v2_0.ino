@@ -9,7 +9,7 @@
 #define greenLed A4
 #define redLed A5
 
-const int rs = 3, en = 4, d4 = A0, d5 = A1, d6 = A2, d7 = A3;
+const int rs = 3, en = 4, d4 = A0, d5 = A1, d6 = A2, d7 = A3; // Pines del LCD
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 const byte ROWS = 4;
 const byte COLS = 4;
@@ -19,22 +19,36 @@ char keys[ROWS][COLS] = {
   {'7', '8', '9', 'C'},
   {'*', '0', '#', 'D'}
 };
-byte rowPins[ROWS] = {12, 11, 10, 9};
-byte colPins[COLS] = {8, 7, 6, 5};
+byte rowPins[ROWS] = {12, 11, 10, 9}; //pines de filas del teclado
+byte colPins[COLS] = {8, 7, 6, 5}; //pines de columnas del teclado
 
-Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS ); //
 
-String pass[3] = {"2A3B", "4C72D", "A8C5D3"};
+String pass[3] = {"2A*B", "4#72D", "A8#*5D"}; // Claves
 
+
+/**
+   Inicializa los pines del led verde y rojo como salidas,
+   se encarga de apagarlos y de inicializar el LCD.
+*/
 void setup() {
   pinMode(greenLed, OUTPUT);
   pinMode(redLed, OUTPUT);
-  digitalWrite(greenLed, 1);
-  digitalWrite(redLed, 1);
-  Serial.begin(9600);
+  digitalWrite(greenLed, 0);
+  digitalWrite(redLed, 0);
   lcd.begin(16, 2);
 }
 
+/**
+   El loop principal del programa.
+
+   1. Muestra en el lcd el mensaje "SELECCIONE CLAVE" y las opciones (A) (B) (C)
+   2. Lee la tecla pulsada
+   3. Si se pulso una tecla, dependiendo de la tecla puesta, pide el password
+      correspondiente y lo valida. Si no es correcto, muestra un error en el lcd.
+
+   En cualquier caso, espera 10ms antes de seguir.
+*/
 void loop() {
   //--- 1 ---
   lcd.setCursor(0, 0);
@@ -66,6 +80,18 @@ void loop() {
   delay(10);
 }
 
+/**
+   Pide al usuario que ingrese una clave y la valida.
+
+   1. Inicializa una cadena vacía para almacenar la clave ingresada.
+   2. Inicializa un contador para saltar espacios en el lcd.
+   3. Muestra en el lcd el mensaje "INGRESE CLAVE" y el numero de caracteres
+      que debe tener la clave.
+   4. Espera a que el usuario presione una tecla, si se presiono una tecla
+      la agrega a la cadena de caracteres.
+   5. Verifica si la cadena ingresada coincide con la clave dada.
+   6. Si coincide, sale del bucle y limpia el lcd.
+*/
 void inputPassword(String password) {
   String keyString = ""; // 1
   byte spaceJump = 0;// 2
@@ -88,6 +114,14 @@ void inputPassword(String password) {
   }
 }
 
+
+/**
+   Muestra en el lcd el mensaje "INGRESE LA CLAVE" y el numero de caracteres
+   que debe tener la clave.
+
+   @param n Numero de caracteres que debe tener la clave
+*/
+
 void printMsg(int n) {
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -102,13 +136,21 @@ void printMsg(int n) {
   lcd.print("CLAVE:");
 }
 
+/**
+   Compara la clave ingresada por el usuario con la clave correcta.
+
+   @param keyString La clave ingresada por el usuario.
+   @param password La clave correcta.
+
+   @return true si la clave es correcta, false en caso contrario.
+*/
 boolean checkPassword(String keyString, String password) {
   if (keyString.length() == password.length() ) { //5.1
     lcd.clear();
     lcd.home();
     if (keyString.equals(password)) {
       lcd.print("CLAVE CORRECTA");
-      blinkLed(greenLed,1000,1);
+      blinkLed(greenLed, 1000, 1);
     } else {
       lcd.print("CLAVE INCORRECTA");
       blinkLed(redLed, 100, 3);
@@ -116,9 +158,17 @@ boolean checkPassword(String keyString, String password) {
     }
     return true;
   }
-  return false; // 5.2
+  return false;
 }
 
+
+/**
+   Hace parpadear un led durante un numero determinado de veces.
+
+   @param led El pin digital al que esta conectado el led.
+   @param pause El tiempo en milisegundos que se enciende o apaga el led.
+   @param n El numero de veces que se hara parpadear el led.
+*/
 void blinkLed(int led, byte pause, byte n) {
   for (int i = 0; i < n; i++) {
     digitalWrite(led, 0);
@@ -126,4 +176,5 @@ void blinkLed(int led, byte pause, byte n) {
     digitalWrite(led, 1);
     delay(pause);
   }
+  digitalWrite(led, 0);
 }
