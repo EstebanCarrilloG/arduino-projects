@@ -8,6 +8,7 @@
 #include <LiquidCrystal.h>
 #define greenLed A4
 #define redLed A5
+#define relay 2
 
 const int rs = 3, en = 4, d4 = A0, d5 = A1, d6 = A2, d7 = A3; // Pines del LCD
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -28,14 +29,17 @@ String pass[3] = {"2A*B", "4#72D", "A8#*5D"}; // Claves
 
 
 /**
-   Inicializa los pines del led verde y rojo como salidas,
+   Inicializa los pines del led verde, rojo y el relay como salidas,
    se encarga de apagarlos y de inicializar el LCD.
 */
 void setup() {
   pinMode(greenLed, OUTPUT);
   pinMode(redLed, OUTPUT);
+  pinMode(relay,OUTPUT);
   digitalWrite(greenLed, 0);
   digitalWrite(redLed, 0);
+  digitalWrite(relay, 0);
+
   lcd.begin(16, 2);
 }
 
@@ -90,7 +94,7 @@ void loop() {
    4. Espera a que el usuario presione una tecla, si se presiono una tecla
       la agrega a la cadena de caracteres.
    5. Verifica si la cadena ingresada coincide con la clave dada.
-   6. Si coincide, sale del bucle y limpia el lcd.
+   6. Si coincide, sale del bucle activa el relay por 300 milisegundos, lo desactiva y limpia el lcd.
 */
 void inputPassword(String password) {
   String keyString = ""; // 1
@@ -108,6 +112,10 @@ void inputPassword(String password) {
     boolean state = checkPassword(keyString, password); // 5
     delay(50);
     if (state == true) { // 6
+      digitalWrite(relay,1);
+      delay(300);
+      digitalWrite(relay,0);
+
       lcd.clear();
       break;
     }
