@@ -1,60 +1,72 @@
-/* 
+/*
 
-* Código escrito por: Esteban Carrillo para EDEPTEC. 
-* Página web: https://www.edeptec.com
-* Facebook: @edeptec
-* Youtube: https://youtube.com/c/EDEPTEC
+  Código escrito por: Esteban Carrillo para EDEPTEC.
+  Página web: https://www.edeptec.com
+  Facebook: @edeptec
+  Youtube: https://youtube.com/c/EDEPTEC
 
 */
 
-#define t1 A1
-#define t2 A2
-#define t3 A3
-#define lm35 A0
-#define calefactor 6
-#define ventilador 7
-
-
 #include <LiquidCrystal.h>
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
-boolean menos = 0;
-boolean mas = 0;
 
-boolean select = 0;
-short tempmin = 10;
-short tempmax = 21;
-byte i;
-byte x;
-int x1;
-int dato = 0;
-int c;
+#define pulsadorSet A1 // Pulsador set en el pin A1
+#define pulsadorMenos A2 // Pulsador menos en el pin A2
+#define pulsadorMas A3 // Pulsador mas en el pin A3
+#define calefactor 6 // Pin donde esta conectado el calefactor
+#define ventilador 7 // Pin donde esta conectado el ventilador
 
-boolean estadoAnt = 0;
+#define lm35 A0     // Pin donde está conectado el sensor lm35
 
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7); // Pines del LCD
+
+int temperaturaMinima = 10; // Variable para almacenar la temperatura minima
+int temperaturaMaxima = 21; // Variable para almacenar la temperatura maxima
+int temperaturaActual; // Variable para almacenar la temperatura actual
+
+// Variables para almacenar el estado previo de los pulsadores
+boolean estadoPrevioPulsadorSet = 0; 
+boolean estadoPrevioPulsadorMas = 0; 
+boolean estadoPrevioPulsadorMenos = 0;
+
+/**
+ * Configura los pines de los pulsadores como entradas, el pin del lcd como
+ * salida y establece la velocidad de comunicación serial. Luego, inicializa
+ * el lcd y el sensor DHT. Finalmente, establece los pines del calefactor y
+ * ventilador como salidas y los pone en estado apagado.
+ */
 void setup() {
 
   Serial.begin(9600);
   lcd.begin(16, 2);
-  pinMode(t1, INPUT);
-  pinMode(t2, INPUT);
-  pinMode(t3, INPUT);
-  pinMode(lm35, INPUT);
+  pinMode(pulsadorSet, INPUT);
+  pinMode(pulsadorMenos, INPUT);
+  pinMode(pulsadorMas, INPUT);
   pinMode(calefactor, OUTPUT);
   pinMode(ventilador, OUTPUT);
   digitalWrite(calefactor, LOW);
   digitalWrite(ventilador, LOW);
-  tempval();
+  leerTemperaturaActual();
 }
 
 
+/**
 
+  * Función principal de bucle que monitoriza y controla continuamente el sistema de clima.
+  *
+  * - Activa el calefactor si la temperatura actual está por debajo del umbral mínimo.
+  * - Activa el ventilador si la temperatura actual está por encima del umbral máximo.
+  * - Muestra las temperaturas mínima, actual y máxima en la pantalla LCD.
+  *- Lee continuamente la temperatura actual y verifica la selección de temperatura. 
+
+*/
 void loop() {
 
-  if (c <= tempmin) {
+  if (temperaturaActual <= temperaturaMinima) {
     digitalWrite(calefactor, HIGH);
     digitalWrite(ventilador, LOW);
-  } else if (c >= tempmax) {
+  } else if (temperaturaActual >= temperaturaMaxima) {
     digitalWrite(calefactor, LOW);
     digitalWrite(ventilador, HIGH);
   } else {
@@ -64,170 +76,167 @@ void loop() {
 
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("T.L ");
-  lcd.print(" T.Act ");
-  lcd.print("T.H");
+  lcd.print("T.min ");
+  lcd.print("T.ac ");
+  lcd.print("T.max");
   lcd.setCursor(0, 1);
-  lcd.print(tempmin);
-  lcd.print("oC ");
-  lcd.print(c);
+  lcd.print(temperaturaMinima);
   lcd.print("oC  ");
-  lcd.print(tempmax);
+  lcd.print(temperaturaActual);
+  lcd.print("oC  ");
+  lcd.print(temperaturaMaxima);
   lcd.print("oC");
   delay(100);
 
-  for (x1 = 0; x1 < 1000; x1++) {
-    tempval();
-    teclas();
-
-    Serial.println(x1);
-
-    if (i == 1) {
-      temperaturaMin();
-    }
-    if (i == 2) {
-      temperaturaMax();
+  for (int i = 0; i < 1000; i++) {
+    
+    leerTemperaturaActual();
+    if (selectorDeTemperatura()) {
+      setTemperaturaMinima();
+      break;
     }
   }
 }
 
-void tempval() {
-  dato = analogRead(lm35);
-  c = (500.0 * dato) / 1023;
+/**
+ * Lee la temperatura actual del sensor DHT y actualiza la variable
+ * global temperaturaActual con el valor obtenido.
+ */
+
+void leerTemperaturaActual(){
+  int dato = analogRead(lm35);
+  temperaturaActual = (500.0 * dato) / 1023;
+
 }
 
-void teclas() {
+/**
+ * Comprueba si se ha seleccionado una nueva temperatura mediante el pulsador set.
+ * El pulsador set debe estar en el pin A1.
+ *
+ * @return true si se ha seleccionado una nueva temperatura, false en caso contrario.
+ */
+bool selectorDeTemperatura() {
+  bool estadoPulsadorSet = digitalRead(pulsadorSet);
+  bool cambiar = false;
 
-  menos = digitalRead(t2);
-  mas = digitalRead(t3);
-  select = digitalRead(t1);
+  if (estadoPulsadorSet != estadoPrevioPulsadorSet && estadoPulsadorSet == HIGH) {
+    cambiar = true;
+  }
+  delay(5);
+  estadoPrevioPulsadorSet = estadoPulsadorSet;
+  return cambiar;
+}
 
-  if (select != estadoAnt) {
-    if (select == HIGH) {
-      i++;
+/**
+ * Aumenta la temperatura minima o maxima dependiendo de la temperatura seleccionada.
+ *
+ * @param temperatura El tipo de temperatura a aumentar, puede ser "minima" o
+ *                    "maxima".
+ *
+ * @return true si se ha presionado el pulsador mas, false en caso contrario.
+ */
+bool aumentarTemperatura(String temperatura) {
+  bool estadoPulsadorMas = digitalRead(pulsadorMas);
+  if (estadoPulsadorMas != estadoPrevioPulsadorMas && estadoPulsadorMas == HIGH) {
+    if (temperatura.equals("minima")) {
+      temperaturaMinima++;
+    } else if (temperatura.equals("maxima")) {
+      temperaturaMaxima++;
+    } else {
+      return true;
     }
-    delay(50);
   }
-  estadoAnt = select;
-
-  if (i == 3 ) {
-    i = 1;
-  }
+  estadoPrevioPulsadorMas = estadoPulsadorMas;
 }
 
-void temperaturaMin() {
+/**
+ * Disminuye la temperatura minima o maxima dependiendo de la temperatura seleccionada.
+ *
+ * @param temperatura El tipo de temperatura a disminuir, puede ser "minima" o
+ *                    "maxima".
+ */
+
+void disminuirTemperatura(String temperatura) {
+  bool estadoPulsadorMenos = digitalRead(pulsadorMenos);
+  if (estadoPulsadorMenos != estadoPrevioPulsadorMenos && estadoPulsadorMenos == HIGH ) {
+    if (temperatura.equals("minima")) {
+      temperaturaMinima--;
+    } else if (temperatura.equals("maxima")) {
+      temperaturaMaxima--;
+    }
+  }
+  estadoPrevioPulsadorMenos = estadoPulsadorMenos;
+  //no retorna ningun valor
+}
+
+void setTemperaturaMinima() {
   lcd.clear();
-  if (i == 1) {
 
-    for (x = 0 ; x < 30; x++) {
-      x1 = 999;
-      msg1();
-      lcd.print(" Tmin");
-      delay(10);
-      teclas();
+  for (int i = 0 ; i < 100; i++) {
+    menuSeleccion("Tmin");
 
-      if (i == 2) {
-        temperaturaMax();
-      }
-
-      if (mas == HIGH) {
-        delay(100 );
-
-        while (true) {
-          teclas();
-          if (mas == HIGH ) {
-            tempmin++;
-          }
-
-          if (menos == HIGH) {
-            tempmin--;
-          }
-
-          if (select == HIGH) {
-            i = 0;
-            x = 29;
-            x1 = 999;
-            break;
-          }
-
-          lcd.clear();
-          lcd.setCursor(0, 0);
-          lcd.print("Set temp min");
-          lcd.setCursor(0, 1);
-          lcd.print(tempmin);
-          lcd.print(" oC");
-          delay(100);
-        }
-      }
-      delay(1);
+    if (selectorDeTemperatura()) {
+      setTemperaturaMaxima();
+      break;
     }
-    i = 0;
+    delay(10);
+
+    if (aumentarTemperatura("")) {
+      delay(100 );
+
+      while (!selectorDeTemperatura()) {
+        aumentarTemperatura("minima");
+        disminuirTemperatura("minima");
+        temperaturaMinima = (temperaturaMinima < 0) ? temperaturaMinima = 0 : temperaturaMinima > 16 ? temperaturaMinima = 16 : temperaturaMinima;
+        menuProgramarTemperatura("min");
+      }
+      break;
+    }
   }
+
 }
 
-void temperaturaMax() {
+void setTemperaturaMaxima() {
   lcd.clear();
-  if (i == 2) {
 
-    for (x = 0 ; x < 30; x++) {
-      x1 = 999;
+  for (int i = 0 ; i < 100; i++) {
+    menuSeleccion("Tmax");
 
-      msg1();
-      lcd.print(" Tmax");
-      Serial.println(i);
-      delay(10);
-      teclas();
-
-      if (i == 1) {
-        temperaturaMin();
-      }
-
-      if (mas == HIGH) {
-        delay(100);
-        while (true) {
-          teclas();
-
-          if (mas == HIGH ) {
-            tempmax++;
-          }
-
-          if (menos == HIGH) {
-            tempmax--;
-          }
-
-          if (select == HIGH) {
-            i = 0;
-            x = 29;
-            x1 = 999;
-            break;
-          }
-
-          if (tempmax > 30) {
-            tempmax = 30;
-          }
-
-          if (tempmax < 20) {
-            tempmax = 20;
-          }
-
-          lcd.clear();
-          lcd.setCursor(0, 0);
-          lcd.print("Set temp max");
-          lcd.setCursor(0, 1);
-          lcd.print(tempmax);
-          lcd.print(" oC");
-          delay(100);
-        }
-      }
-      delay(1);
+    if (selectorDeTemperatura()) {
+      setTemperaturaMinima();
+      break;
     }
-    i = 0;
+
+    delay(10);
+
+    if (aumentarTemperatura("")) {
+      delay(100);
+      while (!selectorDeTemperatura()) {
+        aumentarTemperatura("maxima");
+        disminuirTemperatura("maxima");
+
+        temperaturaMaxima = (temperaturaMaxima > 30) ? (temperaturaMaxima = 30) : (temperaturaMaxima < 20) ? (temperaturaMaxima = 20) : temperaturaMaxima;
+        menuProgramarTemperatura("max");
+      }
+      break;
+    }
   }
 }
+void menuProgramarTemperatura(String tipo) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Set temp ");
+  lcd.print(tipo);
+  lcd.setCursor(0, 1);
+  lcd.print(tipo.equals("max") ? temperaturaMaxima : temperaturaMinima);
+  lcd.print(" oC");
+  delay(100);
+}
 
-void msg1() {
+void menuSeleccion(String tipo) {
   lcd.setCursor(0, 0);
   lcd.print("Presione + para");
   lcd.setCursor(0, 1);
-  lcd.print("Modificar");
+  lcd.print("Modificar ");
+  lcd.print(tipo);
 }
