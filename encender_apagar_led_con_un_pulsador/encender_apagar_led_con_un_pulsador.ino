@@ -1,9 +1,9 @@
-/* 
+/*
 
-* Código escrito por: Esteban Carrillo para EDEPTEC. 
-* Página web: https://www.edeptec.com
-* Facebook: @edeptec
-* Youtube: https://youtube.com/c/EDEPTEC
+  Código escrito por: Esteban Carrillo para EDEPTEC.
+  Página web: https://www.edeptec.com
+  Facebook: @edeptec
+  Youtube: https://youtube.com/c/EDEPTEC
 
 */
 
@@ -23,13 +23,11 @@ void setup()
 void loop()
 {
   bool estadoPulsador = digitalRead(pulsador); // Estado lógico del pulsador
-  if (estadoPulsador  != estadoPrevio) { // Implementación antirrebote
-    if (estadoPulsador == HIGH) estadoDelLed = !estadoDelLed; // Cuando el pulsador se presione, cambia el valor de la variable estadoDelLed
-  }
+
+  if(estadoPulsador  != estadoPrevio && estadoPulsador == HIGH) // Implementación antirrebote && si se presiona el pulsador: 
+    digitalWrite(led, estadoDelLed = !estadoDelLed); // Se enciende o apaga el led dependiendo de el valor de la variable estadoDelLed
 
   delay(10); // Pausa de 10ms
-
   estadoPrevio = estadoPulsador; // Implementación antirrebote
-  
-  digitalWrite(led, estadoDelLed); // Se enciende o apaga el led dependiendo de el valor de la variable estadoDelLed
+   
 }
