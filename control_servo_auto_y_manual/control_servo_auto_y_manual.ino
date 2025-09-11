@@ -1,15 +1,15 @@
 #include <Servo.h>
 Servo myservo;
-#define ldr 7
-#define open 6
-#define mode 5
+#define ldr 16
+#define open 5
+#define mode 4
 
 int angle = 0;
 unsigned long previousTime = 0;
 int delayTime = 6000;
 
 void setup() {
-  myservo.attach(11);
+  myservo.attach(2);
   pinMode(ldr, INPUT);
   pinMode(open, INPUT);
   pinMode(mode, INPUT);
