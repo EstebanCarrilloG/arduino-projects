@@ -18,13 +18,16 @@ Comunicación serial bidireccional.
 
 SoftwareSerial mySerial(rxPin, txPin);  // crear un nuevo onjeto SoftwareSerial
 
-int leds[2] = { 13, 3 };       // Pines en donde van conectados los leds
+int leds[2] = { 13, 3 };  // Pines en donde van conectados los leds
+int ledControlBrillo = 6;
+
 int pulsadores[2] = { 2, 4 };  // Pines en donde van conectados los pulsadores
 
 String str = "";  // Almacena el string recivido por el puerto serial
 
 const int numeroDeDatos = 2;  // Numero de datos a recibir
 int dato[numeroDeDatos];      // Array para almacenar los valores de los datos recibidos
+int valorSlider = 0;          //Almacena valor pwm 0-255
 
 bool estadoPrevio[2] = { 0, 0 };  //Estados previos de los pulsadores "Antirrebote"
 
@@ -40,6 +43,7 @@ void setup() {
     digitalWrite(leds[i], LOW);
     pinMode(pulsadores[i], INPUT_PULLUP);
   }
+  pinMode(ledControlBrillo, OUTPUT);
 }
 
 /**
@@ -58,11 +62,10 @@ void loop() {
   if (mySerial.available() > 0) {  // Verificar si hay datos disponibles
     // Leer hasta el final del string
     str = mySerial.readStringUntil('}');  //String en este punto {"value1":255,"value2":255,"value3":255
-
     // Agregar "}" al final del string
     str.concat("}");  //String en este punto: {"value1":255,"value2":255,"value3":255}
 
-    //Serial.println(str);  // Imprime el string en el monitor serial
+    Serial.println(str);                                     // Imprime el string en el monitor serial
     DeserializationError error = deserializeJson(doc, str);  // Convertir el string a JSON
 
     if (error) {  // Verificar si hubo un error en la conversion
@@ -74,6 +77,7 @@ void loop() {
     // Extrae los valores de los datos recibidos y los almacena en el array dato
     dato[0] = doc["Switch1"].as<boolean>();  //Valor del LED N°1
     dato[1] = doc["Switch2"].as<boolean>();  //Valor del LED N°2
+    valorSlider = doc["slider1"].as<int>();  //Valor de pwm para: ledControlBrillo
   }
 
   bool estadoPulsador[2] = { 0, 0 };  // Almacena estados de los pulsadores
@@ -94,4 +98,6 @@ void loop() {
 
     digitalWrite(leds[i], dato[i]);  //Enciende o apaga los leds
   }
+
+  analogWrite(ledControlBrillo, valorSlider);  // Controla el brillo del led "Pwm"
 }
