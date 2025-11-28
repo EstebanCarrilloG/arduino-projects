@@ -1,0 +1,43 @@
+<circuit version="1.1.0-SR1" rev="2005" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="Max72xx_matrix" CircId="Max72xx_matrix-6" mainComp="false" ShowProp="NumDisplays" Show_id="true" Show_Val="true" Pos="-408,-188" rotation="0" hflip="1" vflip="1" label="Max72xx_matrix-6" idLabPos="-32,-58" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Purple" NumDisplays="5" />
+
+<item itemtype="Subcircuit" CircId="Nano-8" mainComp="false" Show_id="true" Show_Val="false" Pos="-348,-108" rotation="0" hflip="1" vflip="1" label="Nano-8" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0">
+<mainCompProps MainCompId="m328 TQFP-269" Frequency="16 MHz" Program="../../../Documents/GitHub/arduino-projects/matriz_8x8_MAX_PAROLA_con_modulorf/build/arduino.avr.nano/matriz_8x8_MAX_PAROLA_con_modulorf.ino.hex" Auto_Load="false" saveEepr="true" MainMcu="true" SerialMon="-1" />
+</item>
+
+<item itemtype="Push" CircId="Push-15" mainComp="false" Show_id="false" Show_Val="false" Pos="-240,-48" rotation="-90" hflip="1" vflip="1" label="Push-15" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
+
+<item itemtype="Push" CircId="Push-16" mainComp="false" Show_id="false" Show_Val="false" Pos="-204,-48" rotation="-90" hflip="1" vflip="1" label="Push-16" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
+
+<item itemtype="Push" CircId="Push-17" mainComp="false" Show_id="false" Show_Val="false" Pos="-168,-48" rotation="-90" hflip="1" vflip="1" label="Push-17" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" Poles="1" />
+
+<item itemtype="Rail" CircId="Rail-18" mainComp="false" ShowProp="Voltage" Show_id="false" Show_Val="true" Pos="-204,-116" rotation="90" hflip="1" vflip="1" label="Rail-18" idLabPos="-5,-10" labelrot="-90" valLabPos="-12,6" valLabRot="-90" Voltage="5 V" />
+
+<item itemtype="Node" CircId="Node-26" mainComp="false" Pos="-204,-80" />
+
+<item itemtype="Node" CircId="Node-27" mainComp="false" Pos="-208,-80" />
+
+<item itemtype="Connector" uid="Connector-22" startpinid="Nano-8-4" endpinid="Max72xx_matrix-6PinSck" pointList="-340,-44,-436,-44,-436,-136" />
+
+<item itemtype="Connector" uid="Connector-23" startpinid="Max72xx_matrix-6PinDin" endpinid="Nano-8-2" pointList="-428,-136,-428,-60,-340,-60" />
+
+<item itemtype="Connector" uid="Connector-24" startpinid="Max72xx_matrix-6PinCS" endpinid="Nano-8-3" pointList="-420,-136,-420,-52,-340,-52" />
+
+<item itemtype="Connector" uid="Connector-25" startpinid="Push-15-pinP0" endpinid="Nano-8-A0" pointList="-240,-32,-240,-4,-292,-4" />
+
+<item itemtype="Connector" uid="Connector-26" startpinid="Push-16-pinP0" endpinid="Nano-8-A1" pointList="-204,-32,-204,-12,-292,-12" />
+
+<item itemtype="Connector" uid="Connector-27" startpinid="Push-17-pinP0" endpinid="Nano-8-A2" pointList="-168,-32,-168,-20,-292,-20" />
+
+<item itemtype="Connector" uid="Connector-59" startpinid="Push-17-switch0pinN" endpinid="Node-26-1" pointList="-168,-64,-168,-80,-204,-80" />
+
+<item itemtype="Connector" uid="Connector-61" startpinid="Node-26-2" endpinid="Push-16-switch0pinN" pointList="-204,-80,-204,-64" />
+
+<item itemtype="Connector" uid="Connector-62" startpinid="Rail-18-outnod" endpinid="Node-27-1" pointList="-204,-100,-204,-92,-208,-92,-208,-80" />
+
+<item itemtype="Connector" uid="Connector-63" startpinid="Push-15-switch0pinN" endpinid="Node-27-0" pointList="-240,-64,-240,-80,-208,-80" />
+
+<item itemtype="Connector" uid="Connector-64" startpinid="Node-27-2" endpinid="Node-26-0" pointList="-208,-80,-204,-80" />
+
+</circuit>
