@@ -12,15 +12,9 @@
 #define altavoz 8
 
 // Pulsadores principales (teclas musicales)
+int pulsadores[] = { A0, A1, A2, A3, A4, A5, 11, 6 };
 
-#define p1 A0
-#define p2 A1
-#define p3 A2
-#define p4 A3
-#define p5 A4
-#define p6 A5
-#define p7 11
-#define p8 6
+int pulsadoresLength = sizeof(pulsadores) / sizeof(pulsadores[0]);
 
 // Pulsadores para cambio de escala
 #define pSubir 2
@@ -80,15 +74,11 @@ int nota[] = {
 
 void setup() {
   Serial.begin(9600);
+
   // Configurar pines de los pulsadores como entradas
-  pinMode(p1, INPUT);
-  pinMode(p2, INPUT);
-  pinMode(p3, INPUT);
-  pinMode(p4, INPUT);
-  pinMode(p5, INPUT);
-  pinMode(p6, INPUT);
-  pinMode(p7, INPUT);
-  pinMode(p8, INPUT);
+  for (int i = 0; i < pulsadoresLength; i++) {
+    pinMode(pulsadores[i], INPUT);
+  }
 
   pinMode(pSubir, INPUT);
   pinMode(pBajar, INPUT);
@@ -118,129 +108,27 @@ void comprovarB() {
     delay(50);  // Anti-rebote
   }
   estadoAnteriorbajar = bajar;
-
   // Limitar el rango entre 1 y 6 escalas
-  if (escala > 6 && escala < 8 || escala == 0) {
-    escala = 1;
-  }
+  escala = (escala > 6) ? 6 : (escala < 1) ? 1
+                                           : escala; // Limitar el rango
 }
 void loop() {
-  comprovarB(); // Verificar cambios de escala
 
+  comprovarB();  // Verificar cambios de escala
 
-  ////////////////////////////////////////
-  // Pulsador 1 - Nota DO en diferentes escalas
-  if (digitalRead(p1)) {
-    int x;
-    switch (escala) {
-      case 1: x = 0; break;   // DO en escala 1 (C2)
-      case 2: x = 7; break;   // DO en escala 2 (C3)
-      case 3: x = 14; break;  // DO en escala 3 (C4)
-      case 4: x = 21; break;  // DO en escala 4 (C5)
-      case 5: x = 28; break;  // DO en escala 5 (C6)
-      case 6: x = 35; break;  // DO en escala 6 (C7)
+  for (int i = 0; i < pulsadoresLength; i++) { // Recorrer los pulsadores
+    if (digitalRead(pulsadores[i])) { // Si se presiona un pulsador
+      int x;  // Variable auxiliar
+      switch (escala) { // Dependiendo de la escala, se selecciona la nota correspondiente
+        case 1: x = i + 0; break; // i + 0 es la primera nota de la escala
+        case 2: x = i + 7; break; // i + 7 es la segunda nota de la escala
+        case 3: x = i + 14; break;
+        case 4: x = i + 21; break;
+        case 5: x = i + 28; break;
+        case 6: x = i + 35; break;
+      }
+      delay(1);
+      tone(altavoz, nota[x], tiempo); // Reproducir la nota
     }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
-  }
-  ////////////////////////////////////////
-  if (digitalRead(p2)) {
-    int x;
-    switch (escala) {
-      case 1: x = 1; break;
-      case 2: x = 8; break;
-      case 3: x = 15; break;
-      case 4: x = 22; break;
-      case 5: x = 29; break;
-      case 6: x = 36; break;
-    }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
-  }
-
-  ////////////////////////////////////////
-  if (digitalRead(p3)) {
-    int x;
-    switch (escala) {
-      case 1: x = 2; break;
-      case 2: x = 9; break;
-      case 3: x = 16; break;
-      case 4: x = 23; break;
-      case 5: x = 30; break;
-      case 6: x = 37; break;
-    }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
-  }
-  ////////////////////////////////////////
-  if (digitalRead(p4)) {
-    int x;
-    switch (escala) {
-      case 1: x = 3; break;
-      case 2: x = 10; break;
-      case 3: x = 17; break;
-      case 4: x = 24; break;
-      case 5: x = 31; break;
-      case 6: x = 38; break;
-    }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
-  }
-  ////////////////////////////////////////
-  if (digitalRead(p5)) {
-    int x;
-    switch (escala) {
-      case 1: x = 4; break;
-      case 2: x = 11; break;
-      case 3: x = 18; break;
-      case 4: x = 25; break;
-      case 5: x = 32; break;
-      case 6: x = 39; break;
-    }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
-  }
-  ////////////////////////////////////////
-  if (digitalRead(p6)) {
-    int x;
-    switch (escala) {
-      case 1: x = 5; break;
-      case 2: x = 12; break;
-      case 3: x = 19; break;
-      case 4: x = 26; break;
-      case 5: x = 33; break;
-      case 6: x = 40; break;
-    }
-    delay(1);
-
-    tone(altavoz, nota[x], tiempo);
-  }
-  ////////////////////////////////////////
-
-  if (digitalRead(p7)) {
-    int x;
-    switch (escala) {
-      case 1: x = 6; break;
-      case 2: x = 13; break;
-      case 3: x = 20; break;
-      case 4: x = 27; break;
-      case 5: x = 34; break;
-      case 6: x = 41; break;
-    }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
-  }
-  ////////////////////////////////////////
-  if (digitalRead(p8)) {
-    int x;
-    switch (escala) {
-      case 1: x = 7; break;
-      case 2: x = 14; break;
-      case 3: x = 21; break;
-      case 4: x = 28; break;
-      case 5: x = 35; break;
-    }
-    delay(1);
-    tone(altavoz, nota[x], tiempo);
   }
 }
